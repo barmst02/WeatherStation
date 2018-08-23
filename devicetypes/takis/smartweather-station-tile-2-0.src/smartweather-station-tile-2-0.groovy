@@ -152,6 +152,9 @@ metadata {
             state "nt_cloudy", icon:"st.custom.wu1.nt_cloudy", label: ""
             state "nt_partlycloudy", icon:"st.custom.wu1.nt_partlycloudy", label: ""
         }
+        valueTile("temp", "device.temperature", inactiveLabel: false, width: 2, height: 1, decoration: "flat", wordWrap: true) {
+            state("default", label: 'Temperature\n ${currentValue}°')
+        }
         valueTile("lastSTupdate", "device.lastSTupdate", inactiveLabel: false, width: 2, height: 1, decoration: "flat", wordWrap: true) {
             state("default", label: 'Last Updated\n ${currentValue}')
         }
