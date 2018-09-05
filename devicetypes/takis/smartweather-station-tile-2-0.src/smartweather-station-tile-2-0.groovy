@@ -23,6 +23,7 @@ metadata {
         capability "Relative Humidity Measurement"
         capability "Sensor"
         capability "Polling"
+        capability "Water Sensor"
 
         attribute "localSunrise", "string"
         attribute "localSunset", "string"
@@ -152,9 +153,6 @@ metadata {
             state "nt_cloudy", icon:"st.custom.wu1.nt_cloudy", label: ""
             state "nt_partlycloudy", icon:"st.custom.wu1.nt_partlycloudy", label: ""
         }
-        valueTile("temp", "device.temperature", inactiveLabel: false, width: 2, height: 1, decoration: "flat", wordWrap: true) {
-            state("default", label: 'Temperature\n ${currentValue}°')
-        }
         valueTile("lastSTupdate", "device.lastSTupdate", inactiveLabel: false, width: 2, height: 1, decoration: "flat", wordWrap: true) {
             state("default", label: 'Last Updated\n ${currentValue}')
         }
@@ -196,8 +194,8 @@ metadata {
         }
         standardTile("water", "device.water", inactiveLabel: false, width: 1, height: 1, decoration: "flat", wordWrap: true) {
             state "default", label: 'updating...', icon: "st.unknown.unknown.unknown"
-            state "true",        icon: "st.alarm.water.wet",        backgroundColor:"#ff9999"
-            state "false",       icon: "st.alarm.water.dry",        backgroundColor:"#99ff99"
+            state "wet",        icon: "st.alarm.water.wet",        backgroundColor:"#ff9999"
+            state "dry",       icon: "st.alarm.water.dry",        backgroundColor:"#99ff99"
         }
         valueTile("dewpoint", "device.dewpoint", inactiveLabel: false, width: 2, height: 1, decoration: "flat", wordWrap: true) {
             state "default", label:'Dewpoint ${currentValue}°'
@@ -222,7 +220,8 @@ metadata {
         }
         
         main(["temperature2"])
-        details(["temperature", "feelslike", "weatherIcon", "weather", "humidity" , "dewpoint", "windinfo", "pressure", "solarradiation", "uv_index", "light", "visibility", "city", "rise", "set", "lastSTupdate", "percentPrecip", "percentPrecipToday", "percentPrecipLastHour", "water", "temp", "alert", "refresh"])}
+        details(["temperature", "feelslike", "weatherIcon", "weather", "humidity" , "dewpoint", "windinfo", "pressure", "solarradiation", "uv_index", "light", "visibility", 
+        	"city", "rise", "set", "lastSTupdate", "percentPrecip", "percentPrecipToday", "percentPrecipLastHour", "water", "alert", "refresh"])}
 }
 
 // parse events into attributes
@@ -374,9 +373,9 @@ def poll() {
         
         // Since precip_1hr_in is a string, we need to convert it to a decimal in order to compare it as a number.
         if (obs.precip_1hr_in.toFloat() > 0) {
-            sendEvent( name: 'water', value: "true" )
+            sendEvent( name: 'water', value: "wet" )
         } else {
-            sendEvent( name: 'water', value: "false" )
+            sendEvent( name: 'water', value: "dry" )
         }
 
         if (obs.local_tz_offset != device.currentValue("timeZoneOffset")) {
